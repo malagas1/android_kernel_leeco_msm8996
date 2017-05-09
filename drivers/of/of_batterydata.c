@@ -391,15 +391,15 @@ struct device_node *of_batterydata_get_best_profile(
 		}
 	}
 
-	if (best_node == NULL) {
-		if (default_node != NULL) {
+	if (best_node == NULL ) {
+		if(default_node != NULL) {
 			best_node = default_node;
-			pr_info("No battery data found, use default battery data\n");
-		} else {
+			pr_info("No battery data found,use default battery data\n");
+		}else {
 			pr_err("No battery data found\n");
 			return best_node;
 		}
-	} else {
+	}else {
 		/* check that profile id is in range of the measured batt_id */
 		if (abs(best_id_kohm - batt_id_kohm) >
 				((best_id_kohm * id_range_pct) / 100)) {
