@@ -1,4 +1,3 @@
-
 /* Copyright (c) 2012-2016, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,6 +22,7 @@
 #include <linux/spmi.h>
 #include <linux/qpnp/pwm.h>
 #include <linux/workqueue.h>
+#include <linux/delay.h>
 #include <linux/ctype.h>
 #include <linux/regulator/consumer.h>
 #include <linux/delay.h>
