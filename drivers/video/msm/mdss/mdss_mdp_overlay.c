@@ -55,6 +55,10 @@
 #define DFPS_DATA_MAX_FPS 0x7fffffff
 #define DFPS_DATA_MAX_CLK_RATE 250000
 
+#ifdef CONFIG_PRODUCT_LE_X2
+static struct workqueue_struct *letv_retire_wq;
+#endif
+
 static int mdss_mdp_overlay_free_fb_pipe(struct msm_fb_data_type *mfd);
 static int mdss_mdp_overlay_fb_parse_dt(struct msm_fb_data_type *mfd);
 static int mdss_mdp_overlay_off(struct msm_fb_data_type *mfd);
@@ -6330,7 +6334,11 @@ static void __vsync_retire_handle_vsync(struct mdss_mdp_ctl *ctl, ktime_t t)
 	}
 
 	mdp5_data = mfd_to_mdp5_data(mfd);
+#ifdef CONFIG_PRODUCT_LE_X2
+	queue_work(letv_retire_wq, &mdp5_data->retire_work);
+#else
 	queue_kthread_work(&mdp5_data->worker, &mdp5_data->vsync_work);
+#endif
 }
 
 static void __vsync_retire_work_handler(struct kthread_work *work)
@@ -6564,6 +6572,14 @@ int mdss_mdp_overlay_init(struct msm_fb_data_type *mfd)
 	struct mdss_overlay_private *mdp5_data = NULL;
 	struct irq_info *mdss_irq;
 	int rc;
+
+#ifdef CONFIG_PRODUCT_LE_X2
+	letv_retire_wq = alloc_workqueue("letv_retire_wq", WQ_UNBOUND | WQ_HIGHPRI, 0);
+	if (!letv_retire_wq) {
+		pr_err("fail to allocate letv_retire_wq");
+		return -ENOMEM;
+	}
+#endif
 
 	mdp5_data = kzalloc(sizeof(struct mdss_overlay_private), GFP_KERNEL);
 	if (!mdp5_data) {

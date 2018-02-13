@@ -341,11 +341,17 @@ disp_en_gpio_err:
 	return rc;
 }
 
+#ifdef CONFIG_PRODUCT_LE_X2
+extern char spec_char_seq[32];
+#endif
 int mdss_dsi_panel_reset(struct mdss_panel_data *pdata, int enable)
 {
 	struct mdss_dsi_ctrl_pdata *ctrl_pdata = NULL;
 	struct mdss_panel_info *pinfo = NULL;
 	int i, rc = 0;
+#ifdef CONFIG_PRODUCT_LE_X2
+	static char panel_id[2];
+#endif
 
 	if (pdata == NULL) {
 		pr_err("%s: Invalid input data\n", __func__);
@@ -482,7 +488,14 @@ int mdss_dsi_panel_reset(struct mdss_panel_data *pdata, int enable)
 			gpio_set_value((ctrl_pdata->disp_en_gpio), 0);
 			gpio_free(ctrl_pdata->disp_en_gpio);
 		}
+#ifdef CONFIG_PRODUCT_LE_X2
+		if (strcmp (panel_id , "5A") == 0)
+			gpio_set_value((ctrl_pdata->rst_gpio), 1);
+		else
+			gpio_set_value((ctrl_pdata->rst_gpio), 0);
+#else
 		gpio_set_value((ctrl_pdata->rst_gpio), 0);
+#endif
 		gpio_free(ctrl_pdata->rst_gpio);
 		if (gpio_is_valid(ctrl_pdata->mode_gpio))
 			gpio_free(ctrl_pdata->mode_gpio);

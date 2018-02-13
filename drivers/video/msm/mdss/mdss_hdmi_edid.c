@@ -18,6 +18,9 @@
 #include "mdss_fb.h"
 #include "mdss_hdmi_edid.h"
 
+#ifdef CONFIG_PRODUCT_LE_X2
+#include <video/msm_hdmi_modes.h>
+#endif
 #define DBC_START_OFFSET 4
 #define EDID_DTD_LEN 18
 /*
